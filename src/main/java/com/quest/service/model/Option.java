@@ -5,10 +5,10 @@ public class Option {
     private final String text; // текст варіанту відповіді
     private final String nextID; // до якого питання чи результату веде цей вибір
 
-    public Option(String id, String text, String nextID){
+    public Option(String id, String text, String nextId){
         this.id = id;
         this.text = text;
-        this.nextID = nextID;
+        this.nextID = nextId;
     }
 
     public String getId() {
