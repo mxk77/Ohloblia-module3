@@ -4,4 +4,21 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  <servlet>
+    <servlet-name>StartServlet</servlet-name>
+    <servlet-class>com.quest.servlet.StartServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>StartServlet</servlet-name>
+    <url-pattern>/start</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>GameServlet</servlet-name>
+    <servlet-class>com.quest.servlet.GameServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GameServlet</servlet-name>
+    <url-pattern>/play</url-pattern>
+  </servlet-mapping>
 </web-app>
