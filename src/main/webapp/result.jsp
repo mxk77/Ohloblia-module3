@@ -1,36 +1,30 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core"       prefix="c"  %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Котячий квест — Результат</title>
+  <meta charset="UTF-8">
+  <title>🏁 Результат — Котячий квест</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
 </head>
 <body>
-  <c:choose>
-    <c:when test="
-      ${empty currentQuestion.options
-        and (
-          currentQuestion.id == 'forestFish'
-          or currentQuestion.id == 'catchSuccess'
-          or currentQuestion.id == 'homeFeed'
-          or currentQuestion.id == 'mushroomSafe'
-          or currentQuestion.id == 'atticEat'
-          or currentQuestion.id == 'gardenMilk'
-          or currentQuestion.id == 'victoryHome'
-        )
-      }">
-      <h1>Перемога, ${state.playerName}!</h1>
-    </c:when>
-    <c:otherwise>
-      <h1>Поразка, ${state.playerName}...</h1>
-    </c:otherwise>
-  </c:choose>
+    <c:choose>
+        <c:when test="${isWin}">
+          <h1>🎉 Перемога, ${state.playerName}!</h1>
+          <!-- victory image -->
+          <img src="${pageContext.request.contextPath}/assets/img/victory.jpg"
+               alt="Перемога" class="scene-img">
+        </c:when>
+        <c:otherwise>
+          <h1>😿 Поразка, ${state.playerName}...</h1>
+          <!-- defeat image -->
+          <img src="${pageContext.request.contextPath}/assets/img/defeat.jpg"
+               alt="Поразка" class="scene-img">
+        </c:otherwise>
+      </c:choose>
 
-  <p><em>${currentQuestion.text}</em></p>
-
-  <p>Ігор зіграно: ${state.gamesPlayed}</p>
-  <p><a href="${pageContext.request.contextPath}/start">Почати заново</a></p>
+  <p class="result-text"><em>${currentQuestion.text}</em></p>
+  <button type="button" onclick="window.location.href='${pageContext.request.contextPath}/start'">
+    🔁 Почати заново
+  </button>
 </body>
 </html>

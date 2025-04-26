@@ -1,0 +1,206 @@
+/* шрифти, скидання */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
+}
+body {
+    background: linear-gradient(180deg, #fdf6e3 0%, #f5e9d7 100%);
+    color: #2e3440;
+    line-height: 1.6;
+    padding: 2rem 1rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Заголовки */
+h1, h2, h3 {
+    color: #2e3440;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.5s ease-in;
+    letter-spacing: -0.03em;
+}
+h1 {
+    font-size: 2.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Основні кнопки */
+button {
+    background: #5e81ac;
+    color: #fff;
+    border: none;
+    border-radius: 0.4rem;
+    padding: 0.8rem 1.8rem;
+    margin: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+button:hover, button:focus {
+    background: #4c6888;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Стилі для списку персонажів */
+ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 1.5rem auto;
+    max-width: 800px;
+}
+
+li {
+    margin: 0;
+}
+
+li button {
+    width: 100%;
+    min-width: 200px;
+    white-space: nowrap;
+}
+
+/* Форми */
+form {
+    text-align: center;
+    margin: 2rem auto;
+    max-width: 800px;
+}
+
+/* Стилі результатів гри */
+h1[class$="-title"] {
+    margin-top: 2rem;
+    padding: 0 1rem;
+}
+
+.victory-title { color: #2a7a3d; }
+.defeat-title { color: #c93d3d; }
+
+.result-text {
+    font-size: 1.2rem;
+    margin: 1.5rem auto;
+    max-width: 600px;
+    padding: 0 1rem;
+}
+
+/* Поля вводу */
+input[type="text"] {
+    padding: 0.75rem;
+    border: 1px solid #d8dee9;
+    border-radius: 0.4rem;
+    width: 240px;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+}
+input[type="text"]:focus {
+    outline: none;
+    border-color: #88c0d0;
+    box-shadow: 0 0 0 3px rgba(136, 192, 208, 0.2);
+}
+
+/* Блоки зображень */
+.scene-img {
+    display: block;
+    width: 40%;
+    min-width: 300px;
+    border-radius: 0.8rem;
+    margin: 2rem auto;
+    animation: fadeIn 1s ease-in;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+.scene-img:hover {
+    transform: scale(1.02);
+}
+
+/* Передісторія */
+details {
+    margin: 2rem auto;
+    padding: 1rem;
+    max-width: 800px;
+    border-radius: 0.8rem;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+details p {
+    text-align: left;
+    margin: 1rem 0;
+    padding: 0 1rem;
+    line-height: 1.7;
+    max-width: 65ch;
+}
+
+summary {
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    padding: 1.2rem;
+    transition: background 0.2s;
+}
+summary:hover {
+    background: rgba(0,0,0,0.03);
+}
+summary::-webkit-details-marker {
+    display: none;
+}
+summary::before {
+    content: "▶";
+    color: #5e81ac;
+    margin-right: 0.8rem;
+    transition: transform 0.2s;
+}
+details[open] summary::before {
+    transform: rotate(90deg);
+}
+
+/* Стилі для варіантів відповідей */
+.quest-options {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 2rem auto;
+    max-width: 1200px;
+}
+
+.quest-options form {
+    flex: 1;
+    min-width: 200px;
+    max-width: 300px;
+}
+
+.quest-options button {
+    width: 100%;
+    white-space: normal;
+    height: auto;
+    padding: 1rem;
+}
+
+/* Анімація */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

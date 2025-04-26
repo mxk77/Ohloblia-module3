@@ -7,6 +7,7 @@ import com.quest.service.model.SessionState;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,6 +15,7 @@ public class GameServlet extends HttpServlet {
     private static final Logger LOG            = Logger.getLogger(GameServlet.class.getName());
     private static final String ATTR_STATE     = "state";
     private static final String ATTR_QUESTION  = "currentQuestion";
+    private static final String ATTR_WIN       = "isWin";
     private static final String REDIRECT_START = "/start";
     private static final String JSP_GAME       = "/game.jsp";
     private static final String JSP_RESULT     = "/result.jsp";
@@ -54,8 +56,19 @@ public class GameServlet extends HttpServlet {
 
         // кінцева чи проміжна сторінка?
         if (gameService.isEndState(current.getId())) {
+            boolean isWin = List.of(
+                    GameService.ID_FOREST_FISH,
+                    GameService.ID_CATCH_SUCCESS,
+                    GameService.ID_HOME_MEOW,
+                    GameService.ID_MUSHROOM_SAFE,
+                    GameService.ID_ATTIC_EAT,
+                    GameService.ID_GARDEN_MILK,
+                    GameService.ID_VICTORY_HOME
+            ).contains(current.getId());
+
             state.incrementGamesPlayed();
             session.setAttribute(ATTR_STATE, state);
+            req.setAttribute(ATTR_WIN, isWin);
             forward(req, resp, JSP_RESULT);
         } else {
             forward(req, resp, JSP_GAME);
