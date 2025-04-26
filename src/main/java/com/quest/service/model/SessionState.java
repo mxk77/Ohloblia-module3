@@ -33,6 +33,10 @@ public class SessionState {
         this.gamesPlayed++;
     }
 
+    public void setGamesPlayed(int gamesPlayed){
+        this.gamesPlayed=gamesPlayed;
+    }
+
     /** Скидає стан для нової гри */
     public void resetForNewGame() {
         this.currentQuestionId = "start";

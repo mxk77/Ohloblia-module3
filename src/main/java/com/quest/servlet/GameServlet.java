@@ -5,62 +5,67 @@ import com.quest.service.model.Question;
 import com.quest.service.model.SessionState;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 import java.io.IOException;
 
 public class GameServlet extends HttpServlet {
+    // 1) Ініціалізуємо сервіс один раз — ніколи не буде null
+    private final GameService gameService = new GameService();
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        // Переадресуємо на doPost для уніфікованої обробки
         doPost(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        // 2) Отримуємо сесію, не створюючи нову
         HttpSession session = req.getSession(false);
-
-        if (session == null) {
-            // Якщо немає сесії – повертаємо на старт
+        // 3) Якщо сесії нема або в ній немає стану — повертаємо на старт
+        if (session == null || session.getAttribute("state") == null) {
             resp.sendRedirect(req.getContextPath() + "/start");
             return;
         }
 
-        GameService gameService = (GameService) session.getAttribute("gameService");
-        SessionState state      = (SessionState) session.getAttribute("state");
-
+        // 4) Дістаємо стан і опрацьовуємо введене ім'я (якщо є)
+        SessionState state = (SessionState) session.getAttribute("state");
         String playerName = req.getParameter("playerName");
-        if (playerName != null) {
+        if (playerName != null && !playerName.isEmpty()) {
             state.setPlayerName(playerName);
         }
 
-        // Отримуємо вибір
+        // 5) Обробка вибору: якщо є choice, переходимо далі, інакше — починаємо з "start"
         String choice = req.getParameter("choice");
         if (choice != null) {
-            // Опрацьовуємо вибір і оновлюємо поточне питання
             String nextId = gameService.processChoice(state, choice);
             state.setCurrentQuestionId(nextId);
-        } else {
-            // Перший раз на /play – почне з "start"
+        } else if (state.getCurrentQuestionId() == null) {
             state.setCurrentQuestionId("start");
         }
 
+        // 6) Оновлюємо стан у сесії
         session.setAttribute("state", state);
 
-        String currId = state.getCurrentQuestionId();
-        Question current = gameService.getQuestionById(currId);
-        if (gameService.isEndState(currId)) {
-            // Кінець гри – передаємо дані в result.jsp
+        // 7) Підтягуємо поточне питання та форвардимо на потрібну JSP
+        Question current = gameService.getQuestionById(state.getCurrentQuestionId());
+        req.setAttribute("currentQuestion", current);
+        req.setAttribute("state", state);
+
+        if (gameService.isEndState(current.getId())) {
+            // --- ОНОВЛЮЄМО лічильник ---
+            state.incrementGamesPlayed();
+            session.setAttribute("state", state);
+
             req.setAttribute("currentQuestion", current);
             req.setAttribute("state", state);
             req.getRequestDispatcher("/result.jsp")
                     .forward(req, resp);
-        } else {
-            // Продовжуємо гру – передаємо дані в game.jsp
-            req.setAttribute("currentQuestion", current);
-            req.getRequestDispatcher("/game.jsp")
-                    .forward(req, resp);
+        }else {
+            req.getRequestDispatcher("/game.jsp").forward(req, resp);
         }
     }
 }
