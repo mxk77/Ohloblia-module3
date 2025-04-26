@@ -1,52 +1,81 @@
 package com.quest.servlet;
 
-import com.quest.service.GameService;
 import com.quest.service.model.SessionState;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class StartServlet extends HttpServlet {
-    // Єдиний екземпляр сервісу для всіх сеансів
-    private final GameService gameService = new GameService();
+    private static final Logger LOG             = Logger.getLogger(StartServlet.class.getName());
+    private static final String ATTR_STATE      = "state";
+    private static final String REDIRECT_START  = "/start";
+    private static final String URL_PLAY        = "/play";
+    private static final String JSP_INDEX       = "/index.jsp";
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        HttpSession session = req.getSession(true);
-        SessionState state = (SessionState) session.getAttribute("state");
-        if (state == null) {
-            state = new SessionState();
-        } else {
-            state.resetForNewGame();  // лишаємо історію ігор :contentReference[oaicite:6]{index=6}
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp){
+        try {
+            handleGet(req, resp);
+        } catch (Exception ex) {
+            LOG.log(Level.SEVERE, "Error in StartServlet GET", ex);
         }
-        session.setAttribute("state", state);
-        req.getRequestDispatcher("/index.jsp").forward(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp){
+        try {
+            handlePost(req, resp);
+        } catch (Exception ex) {
+            LOG.log(Level.SEVERE, "Error in StartServlet POST", ex);
+        }
+    }
+
+    private void handleGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        HttpSession session = req.getSession(true);
+        SessionState state = getOrCreateState(session);
+        state.resetForNewGame();     // лишаємо історію ігор, скидаємо тільки запитання
+        session.setAttribute(ATTR_STATE, state);
+        forward(req, resp, JSP_INDEX);
+    }
+
+    private void handlePost(HttpServletRequest req, HttpServletResponse resp)
+            throws IOException {
         HttpSession session = req.getSession(false);
         if (session == null) {
-            resp.sendRedirect(req.getContextPath() + "/start");
+            redirect(resp, req.getContextPath() + REDIRECT_START);
             return;
         }
-        SessionState state = (SessionState) session.getAttribute("state");
-        if (state == null) {
-            state = new SessionState();
-        }
+        SessionState state = getOrCreateState(session);
 
         String newName = req.getParameter("playerName");
         if (newName != null && !newName.isBlank()) {
-            // Реєструємо нового або повертаємо існуючого гравця
             state.registerPlayer(newName);
-            state.resetForNewGame();            // скидаємо поточне питання
+            state.resetForNewGame();  // скидаємо поточне питання
         }
 
-        session.setAttribute("state", state);
-        resp.sendRedirect(req.getContextPath() + "/play");
+        session.setAttribute(ATTR_STATE, state);
+        redirect(resp, req.getContextPath() + URL_PLAY);
+    }
+
+    private SessionState getOrCreateState(HttpSession session) {
+        SessionState state = (SessionState) session.getAttribute(ATTR_STATE);
+        if (state == null) {
+            state = new SessionState();
+        }
+        return state;
+    }
+
+    private void forward(HttpServletRequest req, HttpServletResponse resp, String path)
+            throws ServletException, IOException {
+        req.getRequestDispatcher(path).forward(req, resp);
+    }
+
+    private void redirect(HttpServletResponse resp, String url)
+            throws IOException {
+        resp.sendRedirect(url);
     }
 }

@@ -4,8 +4,8 @@ import java.util.List;
 
 public class Question {
     private final String id;
-    private final String text; // текст питання
-    private final List<Option> options; // варіанти відповіді
+    private final String text;
+    private final List<Option> options;
 
     public Question(String id, String text, List<Option> options){
         this.id = id;

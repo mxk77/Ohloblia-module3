@@ -2,8 +2,8 @@ package com.quest.service.model;
 
 public class Option {
     private final String id;
-    private final String text; // текст варіанту відповіді
-    private final String nextID; // до якого питання чи результату веде цей вибір
+    private final String text;
+    private final String nextID;
 
     public Option(String id, String text, String nextId){
         this.id = id;

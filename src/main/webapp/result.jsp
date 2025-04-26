@@ -28,7 +28,6 @@
     </c:otherwise>
   </c:choose>
 
-  <!-- Текст саме цього фінального вузла -->
   <p><em>${currentQuestion.text}</em></p>
 
   <p>Ігор зіграно: ${state.gamesPlayed}</p>
