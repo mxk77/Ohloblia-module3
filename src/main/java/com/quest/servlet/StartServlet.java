@@ -17,15 +17,11 @@ public class StartServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = req.getSession(true);
         SessionState state = (SessionState) session.getAttribute("state");
-
         if (state == null) {
-            // Перший візит — створюємо новий стан
             state = new SessionState();
         } else {
-            // Рестарт гри — лишаємо gamesPlayed і playerName, тільки скидаємо питання
-            state.resetForNewGame();  // має встановлювати currentQuestionId = "start"
+            state.resetForNewGame();  // лишаємо історію ігор :contentReference[oaicite:6]{index=6}
         }
-
         session.setAttribute("state", state);
         req.getRequestDispatcher("/index.jsp").forward(req, resp);
     }
@@ -33,7 +29,6 @@ public class StartServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        // 1) Отримуємо існуючу сесію та стан
         HttpSession session = req.getSession(false);
         if (session == null) {
             resp.sendRedirect(req.getContextPath() + "/start");
@@ -42,24 +37,15 @@ public class StartServlet extends HttpServlet {
         SessionState state = (SessionState) session.getAttribute("state");
         if (state == null) {
             state = new SessionState();
-            state.setCurrentQuestionId("start");
         }
 
-        // 2) Зчитуємо ім'я з форми
         String newName = req.getParameter("playerName");
-        if (newName != null && !newName.isEmpty()) {
-            String oldName = state.getPlayerName();
-
-            // Якщо ім'я змінилося — скидаємо лічильник і поточний прогрес
-            if (oldName == null || !oldName.equals(newName)) {
-                state.setGamesPlayed(0);      // скинути кількість ігор
-                state.resetForNewGame();      // скинути currentQuestionId → "start"
-            }
-
-            state.setPlayerName(newName);
+        if (newName != null && !newName.isBlank()) {
+            // Реєструємо нового або повертаємо існуючого гравця
+            state.registerPlayer(newName);
+            state.resetForNewGame();            // скидаємо поточне питання
         }
 
-        // 3) Зберігаємо оновлений стан і переходимо до /play
         session.setAttribute("state", state);
         resp.sendRedirect(req.getContextPath() + "/play");
     }

@@ -56,15 +56,11 @@ public class GameServlet extends HttpServlet {
         req.setAttribute("state", state);
 
         if (gameService.isEndState(current.getId())) {
-            // --- ОНОВЛЮЄМО лічильник ---
-            state.incrementGamesPlayed();
+            // оновлюємо лічильник для поточного гравця
+            state.incrementGamesPlayed();       // Map.put(playerName, count) :contentReference[oaicite:9]{index=9}
             session.setAttribute("state", state);
-
-            req.setAttribute("currentQuestion", current);
-            req.setAttribute("state", state);
-            req.getRequestDispatcher("/result.jsp")
-                    .forward(req, resp);
-        }else {
+            req.getRequestDispatcher("/result.jsp").forward(req, resp);
+        } else {
             req.getRequestDispatcher("/game.jsp").forward(req, resp);
         }
     }

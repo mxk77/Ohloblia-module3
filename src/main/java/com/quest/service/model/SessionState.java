@@ -1,13 +1,16 @@
 package com.quest.service.model;
 
-public class SessionState {
-    private String playerName;        // ім’я гравця
-    private String currentQuestionId; // поточне питання
-    private int gamesPlayed;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-    public SessionState(){
+public class SessionState {
+    private String playerName;                // поточний гравець
+    private String currentQuestionId;         // поточне питання
+
+    private final Map<String, Integer> gamesByPlayer = new LinkedHashMap<>();
+
+    public SessionState() {
         this.currentQuestionId = "start";
-        this.gamesPlayed = 0;
     }
 
     public String getPlayerName() {
@@ -24,21 +27,30 @@ public class SessionState {
         this.currentQuestionId = currentQuestionId;
     }
 
+    /** Реєструє нового гравця, якщо він ще не існує */
+    public void registerPlayer(String name) {
+        gamesByPlayer.putIfAbsent(name, 0);
+        this.playerName = name;
+    }
+
+    /** Повертає ігри для поточного гравця */
     public int getGamesPlayed() {
-        return gamesPlayed;
+        return gamesByPlayer.getOrDefault(playerName, 0);
     }
 
-    /** Збільшує лічильник зіграних ігор на 1 */
+    /** Збільшує лічильник ігор поточного гравця і оновлює мапу */
     public void incrementGamesPlayed() {
-        this.gamesPlayed++;
+        int count = getGamesPlayed() + 1;
+        gamesByPlayer.put(playerName, count);
     }
 
-    public void setGamesPlayed(int gamesPlayed){
-        this.gamesPlayed=gamesPlayed;
-    }
-
-    /** Скидає стан для нової гри */
+    /** Скидає гру до початку (не міняючи gamesByPlayer) */
     public void resetForNewGame() {
         this.currentQuestionId = "start";
+    }
+
+    /** Повертає всі зареєстровані ніки з порядком вставки */
+    public Map<String, Integer> getGamesByPlayer() {
+        return gamesByPlayer;
     }
 }
