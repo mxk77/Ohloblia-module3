@@ -40,7 +40,7 @@ public class GameServlet extends HttpServlet {
     private void handleRequest(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         HttpSession session = req.getSession(false);
-        if (!isSessionValid(session, resp)) return;
+        if (!isSessionValid(session, req, resp)) return;
 
         SessionState state = (SessionState) session.getAttribute(ATTR_STATE);
         updatePlayerName(req, state);
@@ -75,10 +75,10 @@ public class GameServlet extends HttpServlet {
         }
     }
 
-    private boolean isSessionValid(HttpSession session, HttpServletResponse resp)
+    private boolean isSessionValid(HttpSession session, HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
         if (session == null || session.getAttribute(ATTR_STATE) == null) {
-            resp.sendRedirect(getServletContext().getContextPath() + REDIRECT_START);
+            resp.sendRedirect(req.getContextPath() + REDIRECT_START);
             return false;
         }
         return true;
